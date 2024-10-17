@@ -5,28 +5,28 @@ import random as rnd
 
 
 class Wordle(QWidget):
-    def __init__(self, to_menu):
+    def __init__(self, to_information):
         super().__init__()
-        self.to_menu = to_menu
-        self.__window_size = (521, 750)
+        self.to_information = to_information
+        self.window_size = (521, 750)
 
-        self.__start()
+        self.start()
 
-    def __start(self):
-        self.__word = 'ворон'  # self.__get_word()
-        self.__buttons = {}
-        self.__input_fields = []
-        self.__row = 0
-        self.__column = 0
-        self.__win = False
+    def start(self):
+        self.word = self.get_word()
+        self.buttons = {}
+        self.input_fields = []
+        self.row = 0
+        self.column = 0
+        self.win = False
         self.timer = QTimer()
 
-        self.__draw_game_name()
-        self.__create_manage_buttons()
-        self.__create_input_fields()
-        self.__create_buttons()
+        self.draw_game_name()
+        self.create_manage_buttons()
+        self.create_input_fields()
+        self.create_buttons()
 
-    def __draw_game_name(self):
+    def draw_game_name(self):
         x, y = 12, 10
         for i in 'WORDLE':
             label = QLabel(i, self)
@@ -41,43 +41,31 @@ class Wordle(QWidget):
             label.show()
             x += 42
 
-    def __create_manage_buttons(self):
-        button_menu = QPushButton('☰', self)
-        button_menu.clicked.connect(self.to_menu)
-        button_menu.setStyleSheet("""
-                                    border-radius: 10px;
-                                    font-size: 30px;
-                                    color: #FFFFFF;
-                                    background-color: #A9A9A9;
-                                    """)
-        button_menu.setGeometry(420, 10, 40, 40)
-        button_menu.show()
-        self.__buttons['☰'] = button_menu
-
-        button_settings = QPushButton('⚙', self)
-        button_settings.clicked.connect(lambda: print('⚙'))
+    def create_manage_buttons(self):
+        button_settings = QPushButton('i', self)
+        button_settings.clicked.connect(self.to_information)
         button_settings.setStyleSheet("""
-                                                border-radius: 10px;
-                                                font-size: 30px;
-                                                color: #FFFFFF;
-                                                background-color: #A9A9A9;
-                                                """)
+                                        border-radius: 10px;
+                                        font-size: 30px;
+                                        color: #FFFFFF;
+                                        background-color: #A9A9A9;
+                                        """)
         button_settings.setGeometry(469, 10, 40, 40)
         button_settings.show()
-        self.__buttons['⚙'] = button_settings
+        self.buttons['i'] = button_settings
 
-    def __create_buttons(self):
-        x, y = 4, self.__window_size[1] - 200
+    def create_buttons(self):
+        x, y = 4, self.window_size[1] - 200
         for letter in 'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ':
-            self.__create_button_letter(x, y, 40, 55, letter)
+            self.create_button_letter(x, y, 40, 55, letter)
             x += 43
             if letter == 'Ъ':
-                x, y = 25, self.__window_size[1] - 135
+                x, y = 25, self.window_size[1] - 135
             elif letter == 'Э':
-                x, y = 68, self.__window_size[1] - 70
+                x, y = 68, self.window_size[1] - 70
 
         button_erase = QPushButton('⌫', self)
-        button_erase.clicked.connect(self.__on_click_button_erase)
+        button_erase.clicked.connect(self.on_click_button_erase)
         button_erase.setStyleSheet("""
                                     border-radius: 10px;
                                     font-size: 25px;
@@ -86,24 +74,24 @@ class Wordle(QWidget):
                                     """)
         button_erase.setGeometry(x, y, 61, 55)
         button_erase.show()
-        self.__buttons['⌫'] = button_erase
+        self.buttons['⌫'] = button_erase
 
         button_ok = QPushButton('✓', self)
-        button_ok.clicked.connect(self.__on_click_button_ok)
+        button_ok.clicked.connect(self.on_click_button_ok)
         button_ok.setStyleSheet("""
                                 border-radius: 10px;
                                 font-size: 25px;
                                 color: #000000;
                                 background-color: #FFFF00;
                                 """)
-        button_ok.setGeometry(4, self.__window_size[1] - 70, 61, 55)
+        button_ok.setGeometry(4, self.window_size[1] - 70, 61, 55)
         button_ok.show()
-        self.__buttons['✓'] = button_ok
+        self.buttons['✓'] = button_ok
 
-    def __create_input_fields(self):
+    def create_input_fields(self):
         x, y = 96, 110
         for i in range(6):
-            self.__input_fields.append([])
+            self.input_fields.append([])
             for j in range(5):
                 label = QLabel('', self)
                 label.setGeometry(x, y, 60, 60)
@@ -116,13 +104,13 @@ class Wordle(QWidget):
                                 """)
                 label.setAlignment(Qt.AlignCenter)
                 label.show()
-                self.__input_fields[i].append(label)
+                self.input_fields[i].append(label)
                 x += 67
             x, y = 96, y + 68
 
-    def __create_button_letter(self, x, y, width, height, text):
+    def create_button_letter(self, x, y, width, height, text):
         button = QPushButton(text, self)
-        button.clicked.connect(lambda: self.__on_click_button_letter(text))
+        button.clicked.connect(lambda: self.on_click_button_letter(text))
         button.setStyleSheet("""
                             border: 2px solid #A9A9A9;
                             border-radius: 10px;
@@ -132,56 +120,56 @@ class Wordle(QWidget):
                             """)
         button.setGeometry(x, y, width, height)
         button.show()
-        self.__buttons[text] = button
+        self.buttons[text] = button
 
-    def __on_click_button_letter(self, button_name):
-        input_field = self.__input_fields[self.__row][self.__column]
+    def on_click_button_letter(self, button_name):
+        input_field = self.input_fields[self.row][self.column]
 
         if len(input_field.text()) == 0:
             input_field.setText(input_field.text() + button_name)
-            if self.__column < 4:
-                self.__column += 1
+            if self.column < 4:
+                self.column += 1
 
-    def __on_click_button_erase(self):
-        input_field = self.__input_fields[self.__row][self.__column]
+    def on_click_button_erase(self):
+        input_field = self.input_fields[self.row][self.column]
 
         if len(input_field.text()) > 0:
             input_field.setText('')
         else:
-            if self.__column > 0:
-                self.__column -= 1
-                self.__on_click_button_erase()
+            if self.column > 0:
+                self.column -= 1
+                self.on_click_button_erase()
 
-    def __on_click_button_ok(self):
-        input_field = self.__input_fields[self.__row][self.__column]
+    def on_click_button_ok(self):
+        input_field = self.input_fields[self.row][self.column]
 
-        if self.__row < 6 and self.__column == 4 and len(input_field.text()) > 0:
+        if self.row < 6 and self.column == 4 and len(input_field.text()) > 0:
 
-            c = self.__count_and_draw_right_letters()
+            c = self.count_and_draw_right_letters()
 
-            if c == 5 or self.__row == 5:
-                self.__win = c == 5
-                self.timer.timeout.connect(self.__show_result)
+            if c == 5 or self.row == 5:
+                self.win = c == 5
+                self.timer.timeout.connect(self.show_result)
                 self.timer.start(500)
 
-            self.__row += 1
-            self.__column = 0
+            self.row += 1
+            self.column = 0
 
-    def __count_and_draw_right_letters(self):
+    def count_and_draw_right_letters(self):
         c = 0
-        for i in range(len(self.__input_fields[self.__row])):
-            input_field = self.__input_fields[self.__row][i]
+        for i in range(len(self.input_fields[self.row])):
+            input_field = self.input_fields[self.row][i]
             b = input_field.text()
-            button = self.__buttons[b]
+            button = self.buttons[b]
             b = b.lower()
 
             color = '#A9A9A9'
             font_color = '#FFFFFF'
-            if b == self.__word[i]:
+            if b == self.word[i]:
                 color = '#FFFF00'
                 font_color = '#000000'
                 c += 1
-            elif b in self.__word:
+            elif b in self.word:
                 color = '#FFFFFF'
                 font_color = '#000000'
 
@@ -204,16 +192,16 @@ class Wordle(QWidget):
                                     """)
         return c
 
-    def __show_result(self):
+    def show_result(self):
         self.timer.stop()
         result = 'ПРОИГРЫШ'
         color = '#FF0000'
-        if self.__win:
+        if self.win:
             result = 'ПОБЕДА'
             color = '#00FF00'
 
         frame = QFrame(self)
-        frame.setGeometry(0, 0, self.__window_size[0], self.__window_size[1])
+        frame.setGeometry(0, 0, self.window_size[0], self.window_size[1])
         frame.setStyleSheet('background-color: rgba(0, 0, 0, 0.9);')
         frame.show()
 
@@ -230,7 +218,7 @@ class Wordle(QWidget):
         label.show()
 
         button = QPushButton('Продолжить', self)
-        button.clicked.connect(self.__nex_level)
+        button.clicked.connect(self.nex_level)
         button.setStyleSheet("""
                                 border: 2px solid #A9A9A9;
                                 border-radius: 10px;
@@ -241,13 +229,13 @@ class Wordle(QWidget):
         button.setGeometry(135, 345, 250, 50)
         button.show()
 
-    def __nex_level(self):
+    def nex_level(self):
         for widget in self.findChildren(QWidget):
             widget.deleteLater()
 
         self.update()
-        self.__start()
+        self.start()
 
-    def __get_word(self):
+    def get_word(self):
         with open('resources/words.txt') as file:
             return rnd.choice(file.readlines())

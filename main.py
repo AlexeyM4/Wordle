@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
 from PyQt5.QtGui import QIcon
 import sys
 
+from information import Information
 from Wordle import Wordle
 from Menu import Menu
 
@@ -12,10 +13,12 @@ class MainWindow(QMainWindow):
         self.stacked_widget = QStackedWidget()
 
         self.menu = Menu(self.to_wordle)
-        self.wordle = Wordle(self.to_menu)
+        self.wordle = Wordle(self.to_information)
+        self.information = Information(self.to_wordle)
 
         self.stacked_widget.addWidget(self.menu)
         self.stacked_widget.addWidget(self.wordle)
+        self.stacked_widget.addWidget(self.information)
 
         self.initUI()
 
@@ -34,6 +37,9 @@ class MainWindow(QMainWindow):
     def to_menu(self):
         self.stacked_widget.setCurrentIndex(0)
 
+    def to_information(self):
+        self.stacked_widget.setCurrentIndex(2)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -43,6 +49,3 @@ if __name__ == '__main__':
     main_window.show()
 
     sys.exit(app.exec_())
-
-
-
